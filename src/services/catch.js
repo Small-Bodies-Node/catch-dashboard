@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
-const apiUrl = "https://catch-dev-api.astro.umd.edu/";
+// dev or production
+export const summarizeDev = true;
+const apiUrl = summarizeDev
+  ? "https://catch-dev-api.astro.umd.edu/"
+  : "https://catch-api.astro.umd.edu/";
 
 async function fetchFromAPI(route) {
   const url = `${apiUrl}/${route}`;
