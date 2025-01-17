@@ -17,16 +17,26 @@ import { useStatusUpdates, useStatusSources } from "../services/catch";
 
 export default function Observations() {
   const allSources = useStatusSources();
-  const sources = allSources.isSuccess
+  const sourcesByCount = allSources.isSuccess
     ? allSources.data
         .filter((source) => source.count > 0)
         .sort((a, b) => b.count - a.count)
     : [];
+  const sourcesByNights = allSources.isSuccess
+    ? allSources.data
+        .filter((source) => source.nights > 0)
+        .sort((a, b) => b.nights - a.nights)
+    : [];
   const updates = useStatusUpdates();
 
-  const total = sources.reduce((total, source) => total + source.count, 0);
-
-  const title = `${Intl.NumberFormat().format(total)} observations`;
+  const observations = sourcesByCount.reduce(
+    (total, source) => total + source.count,
+    0
+  );
+  const nights = sourcesByNights.reduce(
+    (total, source) => total + source.nights,
+    0
+  );
 
   return (
     <Box>
@@ -37,18 +47,38 @@ export default function Observations() {
       <Typography component="h5" variant="h6" gutterBottom>
         Current holdings
       </Typography>
-      <Container maxWidth="md" sx={{ py: 2 }}>
-        <Pie
-          title={title}
-          values={sources.map((source) => source.count)}
-          maximum={total}
-          legend={true}
-          labels={sources.map(
-            (source) =>
-              `${source.source_name} (${source.count.toLocaleString()})`
-          )}
-        />
-      </Container>
+
+      <Grid container sx={{ my: 4 }}>
+        <Grid size={{ md: 12, lg: 6 }}>
+          <Container maxWidth="md">
+            <Pie
+              title={`${observations.toLocaleString()} observations`}
+              values={sourcesByCount.map((source) => source.count)}
+              maximum={observations}
+              legend={true}
+              labels={sourcesByCount.map(
+                (source) =>
+                  `${source.source_name} (${source.count.toLocaleString()})`
+              )}
+            />
+          </Container>
+        </Grid>
+
+        <Grid size={{ md: 12, lg: 6 }}>
+          <Container maxWidth="md">
+            <Pie
+              title={`${nights.toLocaleString()} nights`}
+              values={sourcesByNights.map((source) => source.nights)}
+              maximum={nights}
+              legend={true}
+              labels={sourcesByNights.map(
+                (source) =>
+                  `${source.source_name} (${source.nights.toLocaleString()})`
+              )}
+            />
+          </Container>
+        </Grid>
+      </Grid>
 
       <Typography component="h5" variant="h6" gutterBottom>
         Updates in the past...
@@ -73,7 +103,7 @@ export default function Observations() {
 
 function Updates({ title, data }) {
   return (
-    <Grid size={4}>
+    <Grid size={{ lg: 4, md: 12 }}>
       <Typography component="h6" variant="h6" gutterBottom>
         {title}
       </Typography>

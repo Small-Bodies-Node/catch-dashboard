@@ -21,7 +21,7 @@ export default function Index() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Box sx={{ my: 4 }}>
             <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
               CATCH Dashboard
