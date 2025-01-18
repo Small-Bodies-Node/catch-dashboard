@@ -15,25 +15,26 @@ import Pie from "./Pie";
 
 import { useStatusUpdates, useStatusSources } from "../services/catch";
 
-export default function Observations() {
-  const allSources = useStatusSources();
-  const sourcesByCount = allSources.isSuccess
+export default function Observations({ apiUrl }) {
+  const allSources = useStatusSources(apiUrl);
+  const updates = useStatusUpdates(apiUrl);
+
+  const sourcesByObservations = allSources.isSuccess
     ? allSources.data
         .filter((source) => source.count > 0)
         .sort((a, b) => b.count - a.count)
     : [];
-  const sourcesByNights = allSources.isSuccess
-    ? allSources.data
-        .filter((source) => source.nights > 0)
-        .sort((a, b) => b.nights - a.nights)
-    : [];
-  const updates = useStatusUpdates();
-
-  const observations = sourcesByCount.reduce(
+  const observations = sourcesByObservations.reduce(
     (total, source) => total + source.count,
     0
   );
-  const nights = sourcesByNights.reduce(
+
+  // const sourcesByNights = allSources.isSuccess
+  //   ? allSources.data
+  //       .filter((source) => source.nights > 0)
+  //       .sort((a, b) => b.nights - a.nights)
+  //   : [];
+  const nights = sourcesByObservations.reduce(
     (total, source) => total + source.nights,
     0
   );
@@ -53,10 +54,10 @@ export default function Observations() {
           <Container maxWidth="md">
             <Pie
               title={`${observations.toLocaleString()} observations`}
-              values={sourcesByCount.map((source) => source.count)}
+              values={sourcesByObservations.map((source) => source.count)}
               maximum={observations}
               legend={true}
-              labels={sourcesByCount.map(
+              labels={sourcesByObservations.map(
                 (source) =>
                   `${source.source_name} (${source.count.toLocaleString()})`
               )}
@@ -68,10 +69,10 @@ export default function Observations() {
           <Container maxWidth="md">
             <Pie
               title={`${nights.toLocaleString()} nights`}
-              values={sourcesByNights.map((source) => source.nights)}
+              values={sourcesByObservations.map((source) => source.nights)}
               maximum={nights}
               legend={true}
-              labels={sourcesByNights.map(
+              labels={sourcesByObservations.map(
                 (source) =>
                   `${source.source_name} (${source.nights.toLocaleString()})`
               )}
@@ -114,7 +115,9 @@ function Updates({ title, data }) {
               <InventoryIcon />
             </ListItemIcon>
             <ListItemText
-              primary={`${update.count} products from ${update.source_name}`}
+              primary={`${update.count.toLocaleString()} products from ${
+                update.source_name
+              }`}
               secondary={`${update.start_date.split(" ")[0]} to ${
                 update.stop_date.split(" ")[0]
               }`}

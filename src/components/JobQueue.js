@@ -13,8 +13,8 @@ import Pie from "./Pie";
 
 import { useStatusQueue } from "../services/catch";
 
-export default function JobQueue() {
-  const queue = useStatusQueue();
+export default function JobQueue({ apiUrl }) {
+  const queue = useStatusQueue(apiUrl);
 
   const title = `${queue.isSuccess && queue.data.jobs.length}/${
     queue.isSuccess && queue.data.depth

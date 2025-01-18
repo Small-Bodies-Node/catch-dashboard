@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -13,12 +12,11 @@ function pluralize(word, count, suffix = "s") {
   return word + (count !== 1 ? suffix : "");
 }
 
-function primary({ days, jobs, finished, errored, in_progress }) {
-  const total = finished + errored + in_progress;
+function primary({ days, jobs }) {
   return (
     <>
       {jobs} {pluralize("job", jobs)} in the past{" "}
-      {days == 1 ? "day" : `${days} days`}
+      {days === 1 ? "day" : `${days} days`}
     </>
   );
 }
@@ -43,8 +41,8 @@ function secondary({ finished, errored, in_progress }) {
   );
 }
 
-export default function Queries() {
-  const queries = useStatusQueries();
+export default function Queries({ apiUrl }) {
+  const queries = useStatusQueries(apiUrl);
   return (
     <Box>
       <Typography component="h2" variant="h5" gutterBottom>

@@ -1,12 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-// dev or production
-export const summarizeDev = true;
-const apiUrl = summarizeDev
-  ? "https://catch-dev-api.astro.umd.edu/"
-  : "https://catch-api.astro.umd.edu/";
-
-async function fetchFromAPI(route) {
+async function fetchFromAPI(apiUrl, route) {
   const url = `${apiUrl}/${route}`;
   console.log("fetching", url);
   const response = await fetch(url);
@@ -18,30 +12,30 @@ async function fetchFromAPI(route) {
   return response.json();
 }
 
-export function useStatusQueue() {
+export function useStatusQueue(apiUrl) {
   return useQuery({
-    queryKey: ["status/queue"],
-    queryFn: () => fetchFromAPI("status/queue"),
+    queryKey: [apiUrl, "status/queue"],
+    queryFn: () => fetchFromAPI(apiUrl, "status/queue"),
   });
 }
 
-export function useStatusUpdates() {
+export function useStatusUpdates(apiUrl) {
   return useQuery({
-    queryKey: ["status/updates"],
-    queryFn: () => fetchFromAPI("status/updates"),
+    queryKey: [apiUrl, "status/updates"],
+    queryFn: () => fetchFromAPI(apiUrl, "status/updates"),
   });
 }
 
-export function useStatusQueries() {
+export function useStatusQueries(apiUrl) {
   return useQuery({
-    queryKey: ["status/queries"],
-    queryFn: () => fetchFromAPI("status/queries"),
+    queryKey: [apiUrl, "status/queries"],
+    queryFn: () => fetchFromAPI(apiUrl, "status/queries"),
   });
 }
 
-export function useStatusSources() {
+export function useStatusSources(apiUrl) {
   return useQuery({
-    queryKey: ["status/sources"],
-    queryFn: () => fetchFromAPI("status/sources"),
+    queryKey: [apiUrl, "status/sources"],
+    queryFn: () => fetchFromAPI(apiUrl, "status/sources"),
   });
 }
