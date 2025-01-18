@@ -17,6 +17,10 @@ const queryClient = new QueryClient({
   },
 });
 
+export function Head() {
+  return <title>CATCH Dashboard</title>;
+}
+
 export default function Index() {
   return (
     <>
