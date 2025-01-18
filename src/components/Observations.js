@@ -49,7 +49,7 @@ export default function Observations() {
       </Typography>
 
       <Grid container sx={{ my: 4 }}>
-        <Grid size={{ md: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Container maxWidth="md">
             <Pie
               title={`${observations.toLocaleString()} observations`}
@@ -64,7 +64,7 @@ export default function Observations() {
           </Container>
         </Grid>
 
-        <Grid size={{ md: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Container maxWidth="md">
             <Pie
               title={`${nights.toLocaleString()} nights`}
@@ -103,7 +103,7 @@ export default function Observations() {
 
 function Updates({ title, data }) {
   return (
-    <Grid size={{ lg: 4, md: 12 }}>
+    <Grid size={{ lg: 4, xs: 12 }}>
       <Typography component="h6" variant="h6" gutterBottom>
         {title}
       </Typography>
