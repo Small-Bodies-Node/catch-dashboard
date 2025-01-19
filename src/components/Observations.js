@@ -7,6 +7,13 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -15,12 +22,32 @@ import Pie from "./Pie";
 
 import { useStatusUpdates, useStatusSources } from "../services/catch";
 
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString.split(" ")[0]);
+  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
+};
+
 export default function Observations({ apiUrl }) {
   const allSources = useStatusSources(apiUrl);
   const updates = useStatusUpdates(apiUrl);
 
   const sourcesByObservations = allSources.isSuccess
-    ? allSources.data
+    ? [...(allSources.data || [])]
         .filter((source) => source.count > 0)
         .sort((a, b) => b.count - a.count)
     : [];
@@ -29,11 +56,6 @@ export default function Observations({ apiUrl }) {
     0
   );
 
-  // const sourcesByNights = allSources.isSuccess
-  //   ? allSources.data
-  //       .filter((source) => source.nights > 0)
-  //       .sort((a, b) => b.nights - a.nights)
-  //   : [];
   const nights = sourcesByObservations.reduce(
     (total, source) => total + source.nights,
     0
@@ -44,6 +66,24 @@ export default function Observations({ apiUrl }) {
       <Typography component="h2" variant="h5" gutterBottom>
         Observations
       </Typography>
+
+      <Typography component="h5" variant="h6" gutterBottom>
+        Updates in the past...
+      </Typography>
+      <Grid container spacing={2}>
+        <Updates
+          title="24 hours"
+          data={updates.data?.filter((update) => update.days === 1) || []}
+        />
+        <Updates
+          title="7 days"
+          data={updates.data?.filter((update) => update.days === 7) || []}
+        />
+        <Updates
+          title="30 days"
+          data={updates.data?.filter((update) => update.days === 30) || []}
+        />
+      </Grid>
 
       <Typography component="h5" variant="h6" gutterBottom>
         Current holdings
@@ -81,23 +121,7 @@ export default function Observations({ apiUrl }) {
         </Grid>
       </Grid>
 
-      <Typography component="h5" variant="h6" gutterBottom>
-        Updates in the past...
-      </Typography>
-      <Grid container spacing={2}>
-        <Updates
-          title="24 hours"
-          data={updates.data?.filter((update) => update.days === 1) || []}
-        />
-        <Updates
-          title="7 days"
-          data={updates.data?.filter((update) => update.days === 7) || []}
-        />
-        <Updates
-          title="30 days"
-          data={updates.data?.filter((update) => update.days === 30) || []}
-        />
-      </Grid>
+      <ObservationSummaryTable allSources={allSources?.data || []} />
     </Box>
   );
 }
@@ -118,13 +142,49 @@ function Updates({ title, data }) {
               primary={`${update.count.toLocaleString()} products from ${
                 update.source_name
               }`}
-              secondary={`${update.start_date.split(" ")[0]} to ${
-                update.stop_date.split(" ")[0]
-              }`}
+              secondary={`${formatDate(update.start_date)} to ${formatDate(
+                update.stop_date
+              )}`}
             />
           </ListItem>
         ))}
       </List>
     </Grid>
+  );
+}
+
+function ObservationSummaryTable({ allSources }) {
+  return (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="observation summary table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Source</TableCell>
+            <TableCell>Nights</TableCell>
+            <TableCell>Observations</TableCell>
+            <TableCell>Start (UTC)</TableCell>
+            <TableCell>Stop (UTC)</TableCell>
+            <TableCell>Updated (UTC)</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {[...allSources]
+            .sort((a, b) => a.source_name.localeCompare(b.source_name))
+            .map((row) => (
+              <TableRow
+                key={row.source}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell>{row.source_name}</TableCell>
+                <TableCell>{row.nights}</TableCell>
+                <TableCell>{row.count}</TableCell>
+                <TableCell>{formatDate(row.start_date)}</TableCell>
+                <TableCell>{formatDate(row.stop_date)}</TableCell>
+                <TableCell>{formatDate(row.stop_date)}</TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
