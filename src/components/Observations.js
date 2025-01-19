@@ -39,7 +39,9 @@ const months = [
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString.split(" ")[0]);
-  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
+  return `${date.getUTCFullYear()} ${
+    months[date.getUTCMonth()]
+  } ${date.getUTCDate()}`;
 };
 
 export default function Observations({ apiUrl }) {
@@ -108,13 +110,15 @@ export default function Observations({ apiUrl }) {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Container maxWidth="md">
             <Pie
-              title={`${nights.toLocaleString()} nights`}
+              title={`${nights.toLocaleString()} nights by telescope`}
               values={sourcesByObservations.map((source) => source.nights)}
               maximum={nights}
               legend={true}
               labels={sourcesByObservations.map(
                 (source) =>
-                  `${source.source_name} (${source.nights.toLocaleString()})`
+                  `${source.source_name} (${(
+                    source.nights || 0
+                  ).toLocaleString()})`
               )}
             />
           </Container>
@@ -176,11 +180,11 @@ function ObservationSummaryTable({ allSources }) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell>{row.source_name}</TableCell>
-                <TableCell>{row.nights}</TableCell>
-                <TableCell>{row.count}</TableCell>
+                <TableCell>{(row.nights || 0).toLocaleString()}</TableCell>
+                <TableCell>{(row.count || 0).toLocaleString()}</TableCell>
                 <TableCell>{formatDate(row.start_date)}</TableCell>
                 <TableCell>{formatDate(row.stop_date)}</TableCell>
-                <TableCell>{formatDate(row.stop_date)}</TableCell>
+                <TableCell>{formatDate(row.updated)}</TableCell>
               </TableRow>
             ))}
         </TableBody>
