@@ -9,9 +9,7 @@ import Observations from "./Observations";
 import Queries from "./Queries";
 
 export default function CatchDash() {
-  const [apiUrl, setApiUrl] = React.useState(
-    "https://catch-dev-api.astro.umd.edu"
-  );
+  const [apiUrl, setApiUrl] = React.useState("https://catch-api.astro.umd.edu");
   return (
     <Box>
       <ApiSelector apiUrl={apiUrl} setApiUrl={setApiUrl} />
