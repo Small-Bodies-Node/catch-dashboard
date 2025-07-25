@@ -39,9 +39,8 @@ const months = [
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString.split(" ")[0]);
-  return `${date.getUTCFullYear()} ${
-    months[date.getUTCMonth()]
-  } ${date.getUTCDate()}`;
+  return `${date.getUTCFullYear()} ${months[date.getUTCMonth()]
+    } ${date.getUTCDate()}`;
 };
 
 export default function Observations({ apiUrl }) {
@@ -50,8 +49,8 @@ export default function Observations({ apiUrl }) {
 
   const sourcesByObservations = allSources.isSuccess
     ? [...(allSources.data || [])]
-        .filter((source) => source.count > 0)
-        .sort((a, b) => b.count - a.count)
+      .filter((source) => source.count > 0)
+      .sort((a, b) => b.count - a.count)
     : [];
   const observations = sourcesByObservations.reduce(
     (total, source) => total + source.count,
@@ -110,7 +109,7 @@ export default function Observations({ apiUrl }) {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Container maxWidth="md">
             <Pie
-              title={`${nights.toLocaleString()} nights by telescope`}
+              title={`${nights.toLocaleString()} nights by survey site`}
               values={sourcesByObservations.map((source) => source.nights)}
               maximum={nights}
               legend={true}
@@ -143,9 +142,8 @@ function Updates({ title, data }) {
               <InventoryIcon />
             </ListItemIcon>
             <ListItemText
-              primary={`${update.count.toLocaleString()} products from ${
-                update.source_name
-              }`}
+              primary={`${update.count.toLocaleString()} products from ${update.source_name
+                }`}
               secondary={`${formatDate(update.start_date)} to ${formatDate(
                 update.stop_date
               )}`}
